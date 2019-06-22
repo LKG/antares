@@ -1,0 +1,109 @@
+server:
+  port: 5080
+  compression:
+   enabled: true
+#logging:
+#  path: /var/www/logs
+#  config: classpath:logback-spring.xml
+info:
+  app-name: lore
+  app-host: http://127.0.0.1:${server.port}
+  app-description: ${info.app-name} 描述
+  app-version: ${project.version}
+#######maven pom \u91cc\u7684\u914d\u7f6e
+management:
+  endpoints:
+    web:
+      base-path: /admin/monitor
+      exposure:
+        exclude: ["env","beans" ,"shutdown" ]
+        include: "*"
+      path-mapping:
+        health: healthcheck
+  endpoint:
+    logfile:
+      enabled: true
+    health:
+      enabled: true
+      ## 查看明细
+      show-details: always
+spring:
+  main:
+    banner-mode: "off"
+  output:
+    ansi:
+      enabled: DETECT
+  profiles:
+    include: shiro
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  messages:
+    encoding: UTF-8
+  freemarker:
+    prefix:
+    suffix: .ftl
+    templateLoaderPath: classpath:/templates/tpl/, classpath:/templates/sms/, classpath:/templates/email/, classpath:/templates/code/
+    templateEncoding: UTF-8
+    content-type: text/html
+    prefer-file-system-access: false
+    cache: false
+    settings:
+      template_update_delay: 0
+      number_format: '0.##'   #数字格式化，无小数点
+      boolean_format: 'true,false'
+    request-context-attribute: request
+  redis:
+    host: 127.0.0.1
+    database: 0
+    port: 6379
+    password:
+  session:
+    store-type: redis
+  datasource:
+    url: jdbc:mysql://ss.tabis.cn:3306/antares?Unicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: omw@178.Im
+    #配置监控统计拦截的filters，去掉后监控界面sql将无法统计,'wall'用于防火墙
+    filters: stat,config,wall,slf4j
+    # validation-query: SELECT 1
+    min-idle: 10
+    max-active: 20
+    driverClassName: com.mysql.jdbc.Driver
+    druid:
+      logSlowSql: false
+      mergeSql: true
+      slowSqlMillis: 3000
+      web-stat-filter:
+        url-pattern: "/admin/druid/*"
+      stat-view-servlet:
+        url-pattern : "/admin/druid/*"
+        login-username: admin
+        login-password: #####
+        allow:
+        deny:
+  jpa:
+    # Specify the DBMS
+#    database: MYSQL
+    # Show or not log for each sql query
+    show-sql: true
+    open-in-view: true
+    hibernate:
+      show_sql: false
+      format_sql: true
+      # Hibernate ddl auto (create, create-drop, update)
+      ddl-auto: none
+      # Naming strategy
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      # stripped before adding them to the entity manager)
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        enable_lazy_load_no_trans: true
+prod:
+  upload:
+    path:
+      root: /var/www/uploads/
+      media: media
